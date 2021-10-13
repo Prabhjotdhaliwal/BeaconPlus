@@ -9,5 +9,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         println("Hello Prabhjot")
+        println("Hello Prabhjot")
+        println("Hello Prabhjot")
+
     }
 }
