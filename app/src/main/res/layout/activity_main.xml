@@ -1,18 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@drawable/gradient_bg"
+    android:orientation="vertical">
 
-    <TextView
+
+    <ImageView
+        android:id="@+id/bltImg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/ic_baseline_bluetooth_24"
+></ImageView>
+    <Button
+    android:id="@+id/turnonbtn"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:text="@string/TurnOnButton">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</Button>
+    <Button
+        android:id="@+id/turnoffbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/TurnOffButton">
+
+    </Button>
+
+    <Button
+        android:id="@+id/discoverbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="64dp"
+        android:layout_gravity="center"
+        android:text="@string/Dicoverbtn">
+
+    </Button>
+    <Button
+        android:id="@+id/showdevicesbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/ShowDevices">
+
+    </Button>
+    <TextView
+        android:id="@+id/DevicesTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Devices"
+        android:layout_gravity="center"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:scrollbars="vertical">
+
+    </androidx.recyclerview.widget.RecyclerView>
+</LinearLayout>

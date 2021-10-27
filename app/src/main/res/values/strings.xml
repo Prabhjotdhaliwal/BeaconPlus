@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">BeaconPlus</string>
+    <string name="TurnOnButton">Turn On Bluetooth</string>
+    <string name="TurnOffButton">Turn Off Bluetooth</string>
+    <string name="Dicoverbtn">Discover Bluetooth Devices</string>
+    <string name="ShowDevices">Show Paired devices</string>
 </resources>
