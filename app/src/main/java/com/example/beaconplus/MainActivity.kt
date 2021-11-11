@@ -2,16 +2,12 @@ package com.example.beaconplus
 
 import android.Manifest
 import android.app.Activity
-import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
-import android.bluetooth.le.ScanSettings
 import android.content.*
 import android.content.pm.PackageManager
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -20,7 +16,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlin.Lazy as Lazy1
 
 lateinit var bltImage:ImageView
 lateinit var DevicesTv:TextView
@@ -34,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
 
     //Set up Bluetooth
-    private var bluetoothAdapter:BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+    private var bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
     private val bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
     private var scanning = false
     private val handler = Handler()
@@ -44,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var newPairedDeviceList: ArrayList<PairedDevice>
     private lateinit var DiscoverdDeviceList: ArrayList<String>
     private val ScannedDevices: MutableList<String> = ArrayList()
+    private val scanResults = mutableListOf<ScanResult>()
 
     lateinit var imageId: Array<Int>
     lateinit var DeviceName: Array<String>
@@ -58,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         val TurnOnbutton: Button = findViewById(R.id.turnonbtn)
         val TurnOffBltBtn: Button = findViewById(R.id.turnoffbtn)
         val DiscoverDeviceBtn: Button = findViewById(R.id.discoverbtn)
-        val PairdNewDevice: Button= findViewById(R.id.PairNewDevice)
+        val PairdNewDevice: Button = findViewById(R.id.PairNewDevice)
         val showPairedDevices: Button = findViewById(R.id.showpaireddevicesbtn)
 
 
@@ -77,14 +73,13 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-
 //Check location permissions()
 
-       requestLocationPermission()
+        requestLocationPermission()
 
         // Register for broadcasts when a device is discovered.
         val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
-       // registerReceiver(receiver, filter)
+        // registerReceiver(receiver, filter)
 
 //Data for RecyclerView
         imageId = arrayOf(
@@ -133,8 +128,7 @@ class MainActivity : AppCompatActivity() {
         //Discover Devices
         DiscoverDeviceBtn.setOnClickListener()
         {
-         makeDiscoverable()
-
+            makeDiscoverable()
 
 
         }
@@ -157,8 +151,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun scanBLEdevices()
-    {
+    private fun scanBLEdevices() {
         if (!scanning) { // Stops scanning after a pre-defined scan period.
             handler.postDelayed({
                 scanning = false
@@ -169,61 +162,64 @@ class MainActivity : AppCompatActivity() {
         } else {
             scanning = false
             bluetoothLeScanner.stopScan(leScanCallback)
-        }    }
+        }
+    }
 
 
  //   private val leDeviceListAdapter = LeDeviceListAdapter()
     // Device scan callback.
     private val leScanCallback: ScanCallback = object : ScanCallback() {
-        override fun onScanResult(callbackType: Int, result: ScanResult)
-        {
-            super.onScanResult(callbackType, result)
-      //    leDeviceListAdapter.addDevice(result.device)
-        //    leDeviceListAdapter.notifyDataSetChanged()
-          //  println(result.device)
+     override fun onScanResult(callbackType: Int, result: ScanResult) {
+         super.onScanResult(callbackType, result)
+         // leDeviceListAdapter.addDevice(result.device)
+         //  leDeviceListAdapter.notifyDataSetChanged()
+         val indexQuery = scanResults.indexOfFirst { it.device.address == result.device.address }
+         if (indexQuery != -1) { // A scan result already exists with the same address
+             scanResults[indexQuery] = result
+             //   scanResultAdapter.notifyItemChanged(indexQuery)
+         } else {
+             with(result.device) {
+                 println("Found BLE device! Name: ${name ?: "Unnamed"}, address: $address")
+                 scanResults.add(result)
+println(scanResults)
+                 newRecyclerView.adapter = ScannedDeviceAdapter(scanResults)
 
-            val deviceHardwareAddress = result.device.address //Mac address of the bluetooth device
-            val name=result.device.name
-         //   val uuidsval= result.device.uuids
-            println(name)
-            println(deviceHardwareAddress)
-//            println(uuidsval)
+             }
+             //  scanResultAdapter.notifyItemInserted(scanResults.size - 1)
+         }
 
-            ScannedDevices.add(deviceHardwareAddress)
+         // println(scanResults)
+     }
+ }
 
-//            DiscoverdDeviceList.add(Device)
+     private fun requestLocationPermission() {
+         // Check Location permissions
+         if (ContextCompat.checkSelfPermission(
+                 this@MainActivity,
+                 Manifest.permission.ACCESS_FINE_LOCATION
+             ) !==
+             PackageManager.PERMISSION_GRANTED
+         ) {
+             if (ActivityCompat.shouldShowRequestPermissionRationale(
+                     this@MainActivity,
+                     Manifest.permission.ACCESS_FINE_LOCATION
+                 )
+             ) {
+                 ActivityCompat.requestPermissions(
+                     this@MainActivity,
+                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1
+                 )
+             } else {
+                 ActivityCompat.requestPermissions(
+                     this@MainActivity,
+                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1
+                 )
+             }
 
+         }
+     }
 
-    // newRecyclerView.adapter=MyAdapter(newPairedDeviceList)
-        }
-
-
-    }
-
-
-    private fun requestLocationPermission()
-    {
-        // Check Location permissions
-        if (ContextCompat.checkSelfPermission(this@MainActivity,
-                Manifest.permission.ACCESS_FINE_LOCATION) !==
-            PackageManager.PERMISSION_GRANTED)
-        {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this@MainActivity,
-                    Manifest.permission.ACCESS_FINE_LOCATION))
-            {
-                ActivityCompat.requestPermissions(this@MainActivity,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
-            }
-            else
-            {
-                ActivityCompat.requestPermissions(this@MainActivity,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
-            }
-
-        }
-    }
-
-  /*  private fun scanBLEdevices()
+     /*  private fun scanBLEdevices()
     {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
             requestLocationPermission()
@@ -268,57 +264,61 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }*/
-    override fun onResume() {
-        super.onResume()
-        if (!bluetoothAdapter.isEnabled) {
-            showBltDialog()
-        }
-    }
+     override fun onResume() {
+         super.onResume()
+         if (!bluetoothAdapter.isEnabled) {
+             showBltDialog()
+         }
+     }
 
-    //Activity method
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+     //Activity method
+     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-        when(requestCode) {
-            REQUEST_REQUEST_ENABLE_BT ->
-                if (resultCode == Activity.RESULT_OK)
-                {
-                    showBltDialog()
-                } else
-                {
-                    Toast.makeText(this, "Couldn't turnd on Bluetooth", Toast.LENGTH_SHORT).show()
-                }
+         when (requestCode) {
+             REQUEST_REQUEST_ENABLE_BT ->
+                 if (resultCode == Activity.RESULT_OK) {
+                     showBltDialog()
+                 } else {
+                     Toast.makeText(this, "Couldn't turnd on Bluetooth", Toast.LENGTH_SHORT).show()
+                 }
 
-        }
-        super.onActivityResult(requestCode, resultCode, data)
-    }
+         }
+         super.onActivityResult(requestCode, resultCode, data)
+     }
 
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
-                                            grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            1 -> {
-                if (grantResults.isNotEmpty() && grantResults[0] ==
-                    PackageManager.PERMISSION_GRANTED) {
-                    if ((ContextCompat.checkSelfPermission(this@MainActivity,
-                            Manifest.permission.ACCESS_FINE_LOCATION) ===
-                                PackageManager.PERMISSION_GRANTED)) {
-                        Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
-                }
-                return
-            }
-        }
+     override fun onRequestPermissionsResult(
+         requestCode: Int, permissions: Array<String>,
+         grantResults: IntArray
+     ) {
+         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+         when (requestCode) {
+             1 -> {
+                 if (grantResults.isNotEmpty() && grantResults[0] ==
+                     PackageManager.PERMISSION_GRANTED
+                 ) {
+                     if ((ContextCompat.checkSelfPermission(
+                             this@MainActivity,
+                             Manifest.permission.ACCESS_FINE_LOCATION
+                         ) ===
+                                 PackageManager.PERMISSION_GRANTED)
+                     ) {
+                         Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+                     }
+                 } else {
+                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+                 }
+                 return
+             }
+         }
 
-    }
+     }
 
-    private fun locationPermissionRequest() {
-        TODO("Not yet implemented")
-    }
+     private fun locationPermissionRequest() {
+         TODO("Not yet implemented")
+     }
 
-    /*
+     /*
             val dialogBuilder = AlertDialog.Builder(this)
 
             // set message of alert dialog
@@ -346,7 +346,7 @@ class MainActivity : AppCompatActivity() {
     }*/
 
 
-  /*  private fun scanBLEdevices() {
+     /*  private fun scanBLEdevices() {
         val scanFilter = ScanFilter.Builder().build()
 
         val scanFilters: MutableList<ScanFilter> = mutableListOf()
@@ -378,11 +378,11 @@ private  val bleScanCallbacl:ScanCallback by lazy {
         }
 
 */
-    override fun onStart() {
-        super.onStart()
-    }
+     override fun onStart() {
+         super.onStart()
+     }
 
-  /*  private fun getDeviceData() {
+     /*  private fun getDeviceData() {
         for (i in imageId.indices) {
             val Device = Device(DeviceName[i], DeviceAddress[i])
             newPairedDeviceList.add(Device)
@@ -391,131 +391,115 @@ private  val bleScanCallbacl:ScanCallback by lazy {
 
     }*/
 
-    private fun showBltDialog() {
+     private fun showBltDialog() {
 
-        if (bluetoothAdapter?.isEnabled == false) {
-            val enableblthIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            startActivityForResult(enableblthIntent, REQUEST_REQUEST_ENABLE_BT)
+         if (bluetoothAdapter?.isEnabled == false) {
+             val enableblthIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+             startActivityForResult(enableblthIntent, REQUEST_REQUEST_ENABLE_BT)
 
-            //  bltImage.setImageResource(R.drawable.ic_baseline_bluetooth_connected_24)
+             //  bltImage.setImageResource(R.drawable.ic_baseline_bluetooth_connected_24)
 
-        }
-    }
+         }
+     }
 
-    private fun turnOffBlt() {
-        if (!bluetoothAdapter.isEnabled) {
-            Toast.makeText(this, "Bluetooth is already Off", Toast.LENGTH_LONG).show()
+     private fun turnOffBlt() {
+         if (!bluetoothAdapter.isEnabled) {
+             Toast.makeText(this, "Bluetooth is already Off", Toast.LENGTH_LONG).show()
 
-        } else {
-            bluetoothAdapter.disable()
-            bltImage.setImageResource(R.drawable.ic_baseline_bluetooth_disabled_24)
-            Toast.makeText(this, "Turning OFF Bluetooth", Toast.LENGTH_LONG).show()
+         } else {
+             bluetoothAdapter.disable()
+             bltImage.setImageResource(R.drawable.ic_baseline_bluetooth_disabled_24)
+             Toast.makeText(this, "Turning OFF Bluetooth", Toast.LENGTH_LONG).show()
 
-        }
+         }
 
-    }
+     }
 
 
      private fun makeDiscoverable() {
-        //Discover Bluetooth Devices (Unpaired devices)
-       if (bluetoothAdapter.isEnabled) {
-            if (!bluetoothAdapter.isDiscovering) {
-                bluetoothAdapter.startDiscovery()
+         //Discover Bluetooth Devices (Unpaired devices)
+         if (bluetoothAdapter.isEnabled) {
+             if (!bluetoothAdapter.isDiscovering) {
+                 bluetoothAdapter.startDiscovery()
 
-                Toast.makeText(this, "Making Your Device Discoverable", Toast.LENGTH_LONG).show()
-                val discoverIntent = Intent(Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE))
-                discoverIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,300)
-                startActivityForResult(discoverIntent, REQUEST_CODE_DISCOVERABLE_BT)
+                 Toast.makeText(this, "Making Your Device Discoverable", Toast.LENGTH_LONG).show()
+                 val discoverIntent = Intent(Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE))
+                 discoverIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300)
+                 startActivityForResult(discoverIntent, REQUEST_CODE_DISCOVERABLE_BT)
 
-}
-                    }
-         else
-             if(bluetoothAdapter.disable())
-             {
+             }
+         } else
+             if (bluetoothAdapter.disable()) {
                  Toast.makeText(this, "Bluetooth must be turned On", Toast.LENGTH_LONG).show()
 
              }
 
-    }
+     }
 
-  //  Create a BroadcastReceiver for ActionFound
-    val receiver = object : BroadcastReceiver() {
-      override fun onReceive(context: Context?, intent: Intent) {
-          val action: String? = intent.action
-
-
-          when (action) {
-              BluetoothDevice.ACTION_FOUND -> {
-                  //a device is  found ,  Now get this device,object and info from the intent
-                // bluetoothAdapter.startDiscovery()
-                  val device: BluetoothDevice? =
-                      intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                  val deviceName = device?.name
-                  val deviceHardwareAddress =
-                      device?.address // Physical address of the device *MAC address
-
-                  System.out.println(device)
-                  System.out.println(deviceName)
-                  System.out.println(deviceHardwareAddress)
-
-              }
-          }
-      }}
+     //  Create a BroadcastReceiver for ActionFound
+     val receiver = object : BroadcastReceiver() {
+         override fun onReceive(context: Context?, intent: Intent) {
+             val action: String? = intent.action
 
 
+             when (action) {
+                 BluetoothDevice.ACTION_FOUND -> {
+                     //a device is  found ,  Now get this device,object and info from the intent
+                     // bluetoothAdapter.startDiscovery()
+                     val device: BluetoothDevice? =
+                         intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+                     val deviceName = device?.name
+                     val deviceHardwareAddress =
+                         device?.address // Physical address of the device *MAC address
+
+                     System.out.println(device)
+                     System.out.println(deviceName)
+                     System.out.println(deviceHardwareAddress)
+
+                 }
+             }
+         }
+     }
 
 
+     override fun onDestroy() {
+         super.onDestroy()
+         // Don't forget to unregister the ACTION_FOUND receiver.
+         //  unregisterReceiver(receiver)
 
-    override fun onDestroy()
-    {
-        super.onDestroy()
-        // Don't forget to unregister the ACTION_FOUND receiver.
-     //  unregisterReceiver(receiver)
-
-    }
+     }
 
 
-
-    //Paired Devices
-    private fun getpairedDevices()
-    {
-        if(bluetoothAdapter.isEnabled) {
+     //Paired Devices
+     private fun getpairedDevices() {
+         if (bluetoothAdapter.isEnabled) {
              DevicesTv.setText("Paired Devices")
-            val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter.bondedDevices
-            pairedDevices?.forEach { device ->
+             val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter.bondedDevices
+             pairedDevices?.forEach { device ->
 
-                val deviceName = device.name //name of the bluetooth device
-                val deviceHardwareAddress = device.address //Mac address of the bluetooth device
+                 val deviceName = device.name //name of the bluetooth device
+                 val deviceHardwareAddress = device.address //Mac address of the bluetooth device
 
-                  System.out.println(device)
-                  System.out.println(deviceName)
-                  System.out.println(deviceHardwareAddress)
+                 System.out.println(device)
+                 System.out.println(deviceName)
+                 System.out.println(deviceHardwareAddress)
 
-                val Device = PairedDevice(deviceName,deviceHardwareAddress)
-                newPairedDeviceList.add(Device)
+                 val Device = PairedDevice(deviceName, deviceHardwareAddress)
+                 newPairedDeviceList.add(Device)
 
-            }
-            newRecyclerView.adapter=MyAdapter(newPairedDeviceList)
+             }
+             newRecyclerView.adapter = MyAdapter(newPairedDeviceList)
 
-        }
-            else
-            {
-                Toast.makeText(this, " First Turn On Bluetooth", Toast.LENGTH_LONG).show()
+         } else {
+             Toast.makeText(this, " First Turn On Bluetooth", Toast.LENGTH_LONG).show()
 
 
+         }
+     }
+
+ }
 
 
-}
-    }
-
-
-
-
-
-
-//
-
-}
 
 
 

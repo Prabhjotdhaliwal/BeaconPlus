@@ -34,6 +34,7 @@ class MyAdapter(private val DeviceList:ArrayList<PairedDevice>):
     class ViewHolder(itemView:View): RecyclerView.ViewHolder(itemView)
     {
        // val  DeviceImage:ImageView=itemView.findViewById(R.id.deviceimg11)
+
         val DeviceName:TextView=itemView.findViewById(R.id.deviceName11)
         val DeviceAddress:TextView=itemView.findViewById(R.id.deviceAddress11)
     }
