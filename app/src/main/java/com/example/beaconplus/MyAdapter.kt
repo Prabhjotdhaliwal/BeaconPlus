@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.w3c.dom.Text
 
-class MyAdapter(private val DeviceList:ArrayList<Device>):
+class MyAdapter(private val DeviceList:ArrayList<PairedDevice>):
     RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
 

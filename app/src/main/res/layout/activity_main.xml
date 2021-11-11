@@ -43,11 +43,20 @@
 
     </Button>
     <Button
-        android:id="@+id/showdevicesbtn"
+        android:id="@+id/PairNewDevice"
+        android:layout_width="wrap_content"
+        android:layout_height="64dp"
+        android:layout_gravity="center"
+        android:text="@string/AvailableDevices">
+
+    </Button>
+
+    <Button
+        android:id="@+id/showpaireddevicesbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/ShowDevices">
+        android:text="@string/ShowPairedDevices">
 
     </Button>
     <TextView
