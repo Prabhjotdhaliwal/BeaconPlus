@@ -31,7 +31,7 @@ class ScannedDeviceAdapter(
     ) : RecyclerView.ViewHolder(view) {
 
         fun bind(result: ScanResult) {
-
+//
             val DeviceName: TextView =itemView.findViewById(R.id.deviceName11)
             val DeviceAddress: TextView =itemView.findViewById(R.id.deviceAddress11)
             val DeviceRssi: TextView =itemView.findViewById(R.id.deviceAddress11)
