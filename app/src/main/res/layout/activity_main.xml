@@ -18,47 +18,63 @@
         android:background="@drawable/ic_baseline_bluetooth_24"
 ></ImageView>
     <Button
-    android:id="@+id/turnonbtn"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:text="@string/TurnOnButton">
+        android:id="@+id/turnonbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/TurnOnButton"
+        android:textAlignment="center"
+        android:textSize="10sp">
 
-</Button>
+    </Button>
+
     <Button
         android:id="@+id/turnoffbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/TurnOffButton">
+        android:text="@string/TurnOffButton"
+        android:textAlignment="center"
+        android:textSize="10sp">
 
     </Button>
+
 
     <Button
         android:id="@+id/discoverbtn"
         android:layout_width="wrap_content"
-        android:layout_height="64dp"
-        android:layout_gravity="center"
-        android:text="@string/Dicoverbtn">
-
-    </Button>
-    <Button
-        android:id="@+id/PairNewDevice"
-        android:layout_width="wrap_content"
-        android:layout_height="64dp"
-        android:layout_gravity="center"
-        android:text="@string/AvailableDevices">
-
-    </Button>
-
-    <Button
-        android:id="@+id/showpaireddevicesbtn"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/ShowPairedDevices">
+        android:text="@string/Dicoverbtn"
+        android:textAlignment="center"
+        android:textSize="10sp">
 
     </Button>
+
+
+
+        <Button
+            android:id="@+id/scanDevice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/AvailableDevices"
+            android:textAlignment="center"
+            android:textSize="10sp">
+
+        </Button>
+
+        <Button
+            android:id="@+id/showpaireddevicesbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/ShowPairedDevices"
+            android:textAlignment="center"
+            android:textSize="10sp">
+
+        </Button>
+
     <TextView
         android:id="@+id/DevicesTv"
         android:layout_width="wrap_content"

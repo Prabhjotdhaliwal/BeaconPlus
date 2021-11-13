@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         val TurnOnbutton: Button = findViewById(R.id.turnonbtn)
         val TurnOffBltBtn: Button = findViewById(R.id.turnoffbtn)
         val DiscoverDeviceBtn: Button = findViewById(R.id.discoverbtn)
-        val PairdNewDevice: Button = findViewById(R.id.PairNewDevice)
+        val ScanDevices: Button = findViewById(R.id.scanDevice)
         val showPairedDevices: Button = findViewById(R.id.showpaireddevicesbtn)
 
 
@@ -96,7 +96,6 @@ class MainActivity : AppCompatActivity() {
         newRecyclerView.layoutManager = LinearLayoutManager(this)
         newRecyclerView.setHasFixedSize(true)
 
-        newPairedDeviceList = arrayListOf<PairedDevice>()
         //  getDeviceData()
 
 
@@ -133,7 +132,7 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        PairdNewDevice.setOnClickListener()
+        ScanDevices.setOnClickListener()
         {
             scanBLEdevices()
 
@@ -173,22 +172,23 @@ class MainActivity : AppCompatActivity() {
          super.onScanResult(callbackType, result)
          // leDeviceListAdapter.addDevice(result.device)
          //  leDeviceListAdapter.notifyDataSetChanged()
+         DevicesTv.setText("Scanned Devices")
          val indexQuery = scanResults.indexOfFirst { it.device.address == result.device.address }
          if (indexQuery != -1) { // A scan result already exists with the same address
              scanResults[indexQuery] = result
              //   scanResultAdapter.notifyItemChanged(indexQuery)
          } else {
              with(result.device) {
-                 println("Found BLE device! Name: ${name ?: "Unnamed"}, address: $address")
+                 println("Found BLE device! Name: ${name ?: "Unnamed"}, address: $address,uuids:$uuids")
                  scanResults.add(result)
-println(scanResults)
+
+                 println(scanResults)
+
                  newRecyclerView.adapter = ScannedDeviceAdapter(scanResults)
 
              }
-             //  scanResultAdapter.notifyItemInserted(scanResults.size - 1)
          }
 
-         // println(scanResults)
      }
  }
 
@@ -472,6 +472,8 @@ private  val bleScanCallbacl:ScanCallback by lazy {
 
      //Paired Devices
      private fun getpairedDevices() {
+         newPairedDeviceList = arrayListOf<PairedDevice>()
+
          if (bluetoothAdapter.isEnabled) {
              DevicesTv.setText("Paired Devices")
              val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter.bondedDevices
@@ -484,10 +486,14 @@ private  val bleScanCallbacl:ScanCallback by lazy {
                  System.out.println(deviceName)
                  System.out.println(deviceHardwareAddress)
 
+
                  val Device = PairedDevice(deviceName, deviceHardwareAddress)
+
                  newPairedDeviceList.add(Device)
 
              }
+
+             newRecyclerView.adapter?.notifyDataSetChanged()
              newRecyclerView.adapter = MyAdapter(newPairedDeviceList)
 
          } else {

@@ -6,7 +6,7 @@
    >
 <androidx.cardview.widget.CardView
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:id="@+id/cardview"
     android:layout_margin="5dp"
     app:cardBackgroundColor="#81C784"
@@ -17,7 +17,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
 
 <ImageView
@@ -32,12 +32,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="hello"
+            android:layout_margin="3dp"
             >
 
         </TextView>
 
         <TextView
             android:id="@+id/deviceAddress11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Jot"
+            ></TextView>
+        <TextView
+            android:id="@+id/devicerssi1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Jot"
