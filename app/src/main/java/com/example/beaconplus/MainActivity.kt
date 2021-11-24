@@ -11,11 +11,13 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.view.View.GONE
 import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+
 
 lateinit var bltImage:ImageView
 lateinit var DevicesTv:TextView
@@ -37,6 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var newRecyclerView: RecyclerView
     private lateinit var newPairedDeviceList: ArrayList<PairedDevice>
+   // private lateinit var newAvailableDeviceList: ArrayList<AvailableDevices>
     private lateinit var DiscoverdDeviceList: ArrayList<String>
     private val ScannedDevices: MutableList<String> = ArrayList()
     private val scanResults = mutableListOf<ScanResult>()
@@ -50,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//Buttons
+//Bluetooth Buttons
         val TurnOnbutton: Button = findViewById(R.id.turnonbtn)
         val TurnOffBltBtn: Button = findViewById(R.id.turnoffbtn)
         val DiscoverDeviceBtn: Button = findViewById(R.id.discoverbtn)
@@ -58,8 +61,8 @@ class MainActivity : AppCompatActivity() {
         val showPairedDevices: Button = findViewById(R.id.showpaireddevicesbtn)
 
 
-
-
+        val pgsBar: ProgressBar  = findViewById(R.id.pBar);
+pgsBar.setVisibility(GONE)
         DevicesTv = findViewById(R.id.DevicesTv)
         bltImage = findViewById(R.id.bltImg)
         newRecyclerView = findViewById(R.id.recyclerView)
@@ -73,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-//Check location permissions()
+//Check location permissions
 
         requestLocationPermission()
 
@@ -134,8 +137,20 @@ class MainActivity : AppCompatActivity() {
 
         ScanDevices.setOnClickListener()
         {
-            scanBLEdevices()
 
+           scanBLEdevices()
+
+
+        //Second way to discover bluetooth devices
+
+
+         /*  val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
+            filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+            filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+            registerReceiver(receiver, filter)
+            bluetoothAdapter.startDiscovery()
+*/
+            //to up to an another activity
             // val intent = Intent(this, DevicesActivity::class.java)
             //  startActivity(intent)
         }
@@ -164,25 +179,57 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
  //   private val leDeviceListAdapter = LeDeviceListAdapter()
     // Device scan callback.
-    private val leScanCallback: ScanCallback = object : ScanCallback() {
-     override fun onScanResult(callbackType: Int, result: ScanResult) {
+    private val leScanCallback: ScanCallback = object : ScanCallback()
+
+     {
+        override fun onScanResult(callbackType: Int, result: ScanResult)
+     {
          super.onScanResult(callbackType, result)
          // leDeviceListAdapter.addDevice(result.device)
          //  leDeviceListAdapter.notifyDataSetChanged()
          DevicesTv.setText("Scanned Devices")
          val indexQuery = scanResults.indexOfFirst { it.device.address == result.device.address }
-         if (indexQuery != -1) { // A scan result already exists with the same address
+         if (indexQuery != -1)
+         {
+             // A scan result already exists with the same address
              scanResults[indexQuery] = result
              //   scanResultAdapter.notifyItemChanged(indexQuery)
-         } else {
-             with(result.device) {
-                 println("Found BLE device! Name: ${name ?: "Unnamed"}, address: $address,uuids:$uuids")
+         }
+         else
+         {
+             with(result.device)
+             {
+                 var rssi = result.rssi
+                 println(rssi)
+                 println("Found BLE device! Name: ${name ?: "Unnamed"},address: $address")
                  scanResults.add(result)
+               /*  var bd = result.device
 
+                 val strengthThreshold=200
+
+                 if(rssi > strengthThreshold)
+                 {
+                     println("Rssi"+rssi)
+                 }
+
+                 var uuid = ""
+                 if (uuids != null) {
+                     for (ep in uuids) {
+                         uuid += "$ep "
+                     }
+                    println(uuid)
+                 }*/
                  println(scanResults)
+
+/*var name=result.device.name
+                 var add= result.device.address
+                 var rssi1= result.rssi
+
+                 val Device1 = AvailableDevices(name, add,rssi1)
+
+                 newAvailableDeviceList.add(Device1)*/
 
                  newRecyclerView.adapter = ScannedDeviceAdapter(scanResults)
 
@@ -451,7 +498,7 @@ private  val bleScanCallbacl:ScanCallback by lazy {
                      val deviceName = device?.name
                      val deviceHardwareAddress =
                          device?.address // Physical address of the device *MAC address
-
+         Toast.makeText(this@MainActivity,"Found device",Toast.LENGTH_LONG).show()
                      System.out.println(device)
                      System.out.println(deviceName)
                      System.out.println(deviceHardwareAddress)
@@ -465,7 +512,7 @@ private  val bleScanCallbacl:ScanCallback by lazy {
      override fun onDestroy() {
          super.onDestroy()
          // Don't forget to unregister the ACTION_FOUND receiver.
-         //  unregisterReceiver(receiver)
+        //  unregisterReceiver(receiver)
 
      }
 

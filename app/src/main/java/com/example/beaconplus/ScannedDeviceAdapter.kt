@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class ScannedDeviceAdapter(
-    private val items: List<ScanResult>
+    private val items: MutableList<ScanResult>
 ) : RecyclerView.Adapter<ScannedDeviceAdapter.ViewHolder>() {
 
 
@@ -22,27 +22,37 @@ class ScannedDeviceAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
+       /// holder.DeviceName.text=item.DeviceName
+      //  holder.DeviceAddress.text=item.Deviceaddress
+      //  holder.DeviceRssi.text= item.DeviceRssi.toString()
 
-        holder.bind(item)
+       holder.bind(item)
     }
 
-    class ViewHolder(
-        private val view: View
-    ) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view),View.OnClickListener {
+        val DeviceName: TextView =itemView.findViewById(R.id.deviceName11)
+        val DeviceAddress: TextView =itemView.findViewById(R.id.deviceAddress11)
+        val DeviceRssi: TextView =itemView.findViewById(R.id.deviceAddress11)
 
-        fun bind(result: ScanResult) {
+
+        fun bind(result: ScanResult)
+        {
 //
             val DeviceName: TextView =itemView.findViewById(R.id.deviceName11)
             val DeviceAddress: TextView =itemView.findViewById(R.id.deviceAddress11)
             val DeviceRssi: TextView =itemView.findViewById(R.id.deviceAddress11)
-
-
-            DeviceName.text = result.device.name ?: "Unnamed"
+          //  val rssi= result.rssi
+           // DeviceRssi.text=rssi.toString()
+           DeviceName.text = result.device.name ?: "Unnamed"
             DeviceAddress.text = result.device.address
-          //  view.setOnClickListener { onClickListener.invoke(result)
             }
 
+        override fun onClick(v: View?) {
+            TODO("Not yet implemented")
         }
+
+    }
+
     }
 
 
