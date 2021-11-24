@@ -205,6 +205,8 @@ pgsBar.setVisibility(GONE)
                  println(rssi)
                  println("Found BLE device! Name: ${name ?: "Unnamed"},address: $address")
                  scanResults.add(result)
+
+
                /*  var bd = result.device
 
                  val strengthThreshold=200
