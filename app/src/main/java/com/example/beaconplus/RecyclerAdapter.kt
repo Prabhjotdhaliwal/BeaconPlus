@@ -1,5 +1,6 @@
 package com.example.beaconplus
 
+import android.bluetooth.le.ScanResult
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,51 +8,60 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class RecyclerAdapter(
-    data1: ArrayList<String>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>()
-{
+class RecyclerAdapter(private val DeviceList:ArrayList<AvailableDevices>):
+    RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
-    private  var DeviceName1= arrayOf("bluetoothdevice1","bluetoothdevice2","bluetoothdevice3","bluetoothdevice4","bluetoothdevice5")
-    private  var DeviceAddress1= arrayOf("Deviceaddress1","Deviceaddress3","Deviceaddress4","Deviceaddress5","bluetoothdevice5")
-     private var Images= arrayListOf(R.drawable.ic_baseline_bluetooth_connected_24,R.drawable.ic_baseline_bluetooth_connected_24,R.drawable.ic_baseline_bluetooth_connected_24,R.drawable.ic_baseline_bluetooth_connected_24,R.drawable.ic_baseline_bluetooth_connected_24)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerAdapter.ViewHolder {
-
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.row_items,parent,false)
-
-        return ViewHolder(v)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder
+    {
+        val itemView=LayoutInflater.from(parent.context).inflate(R.layout.row_items,parent,false)
+        return ViewHolder(itemView)
     }
 
-    override fun onBindViewHolder(holder: RecyclerAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val currentItem=DeviceList[position]
+        //   holder.DeviceImage.setImageResource(currentItem.DeviceImage)
+        holder.DeviceName.text=currentItem.DeviceName
+        holder.DeviceAddress.text=currentItem.Deviceaddress
+        holder.DeviceRssi.text= currentItem.DeviceRssi.toString()
 
-     //   holder.itemName.text=DeviceName1[position]
-      //holder.itemAddress.text=DeviceAddress1[position]
-     // holder.itemImage.setImageResource(Images[position])
 
     }
 
-    override fun getItemCount(): Int {
-return DeviceName1.size
+    override fun getItemCount(): Int
+    {
+        return DeviceList.size
     }
 
-  inner  class ViewHolder (itemView:View):RecyclerView.ViewHolder(itemView),View.OnClickListener{
-//var itemImage:ImageView
-//var itemName:TextView
-//var itemAddress:TextView
 
-init {
-   // itemImage=itemView.findViewById(R.id.DeviceImage)
-   // itemName=itemView.findViewById(R.id.DeviceName)
- //   itemAddress=itemView.findViewById(R.id.DeviceAddress)
+    class ViewHolder(itemView:View): RecyclerView.ViewHolder(itemView)
+    {
+        // val  DeviceImage:ImageView=itemView.findViewById(R.id.deviceimg11)
 
-}
+        val DeviceName:TextView=itemView.findViewById(R.id.deviceName11)
+        val DeviceAddress:TextView=itemView.findViewById(R.id.deviceAddress11)
+        val DeviceRssi:TextView=itemView.findViewById(R.id.devicerssi1)
 
 
+     /*   fun bind(result: ScanResult)
+        {
+//
+            val DeviceName: TextView =itemView.findViewById(R.id.deviceName11)
+            val DeviceAddress: TextView =itemView.findViewById(R.id.deviceAddress11)
+            val DeviceRssi: TextView =itemView.findViewById(R.id.deviceAddress11)
+            //  val rssi= result.rssi
+            // DeviceRssi.text=rssi.toString()
+            DeviceName.text = result.device.name ?: "Unnamed"
+            DeviceAddress.text = result.device.address
+            DeviceRssi.text= result.rssi.toString()
+        }*/
 
-        override fun onClick(v: View?) {
+    }
+
+         fun onClick(v: View?) {
             TODO("Not yet implemented")
         }
 
     }
-}
+
 

@@ -40,9 +40,9 @@ class ScannedDeviceAdapter(
 //
             val DeviceName: TextView =itemView.findViewById(R.id.deviceName11)
             val DeviceAddress: TextView =itemView.findViewById(R.id.deviceAddress11)
-            val DeviceRssi: TextView =itemView.findViewById(R.id.deviceAddress11)
-          //  val rssi= result.rssi
-           // DeviceRssi.text=rssi.toString()
+            val DeviceRssi: TextView =itemView.findViewById(R.id.devicerssi1)
+           val rssi= result.rssi
+           DeviceRssi.text=rssi.toString()
            DeviceName.text = result.device.name ?: "Unnamed"
             DeviceAddress.text = result.device.address
             }
