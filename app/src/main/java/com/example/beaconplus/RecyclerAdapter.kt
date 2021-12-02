@@ -9,7 +9,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class RecyclerAdapter(private val DeviceList:ArrayList<AvailableDevices>):
-    RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+    RecyclerView.Adapter<RecyclerAdapter.ViewHolder>()
+{
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder
@@ -18,14 +19,13 @@ class RecyclerAdapter(private val DeviceList:ArrayList<AvailableDevices>):
         return ViewHolder(itemView)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int)
+    {
         val currentItem=DeviceList[position]
-        //   holder.DeviceImage.setImageResource(currentItem.DeviceImage)
+        //holder.DeviceImage.setImageResource(currentItem.DeviceImage)
         holder.DeviceName.text=currentItem.DeviceName
         holder.DeviceAddress.text=currentItem.Deviceaddress
         holder.DeviceRssi.text= currentItem.DeviceRssi.toString()
-
-
     }
 
     override fun getItemCount(): Int

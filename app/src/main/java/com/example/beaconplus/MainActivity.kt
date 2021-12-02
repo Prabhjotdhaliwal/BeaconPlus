@@ -5,11 +5,9 @@ import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.content.*
 import android.content.pm.PackageManager
-import android.graphics.Insets.add
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -19,10 +17,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.bluetooth.le.ScanRecord
-
-
-
+import com.example.beaconplus.databinding.ActivityMainBinding
 
 
 lateinit var bltImage:ImageView
@@ -35,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     //  private var layoutManager:RecyclerView.LayoutManager?= null
     // private  var adapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>?=null
 
+    lateinit var binding: ActivityMainBinding
 
     //Set up Bluetooth
     private var bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
@@ -53,11 +49,18 @@ class MainActivity : AppCompatActivity() {
     lateinit var imageId: Array<Int>
     lateinit var DeviceName: Array<String>
     lateinit var DeviceAddress: Array<String>
-
+var IsFragmentLoaded=true
+val fManager = supportFragmentManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+
+
+
+
 
 //Bluetooth Buttons
         val TurnOnbutton: Button = findViewById(R.id.turnonbtn)
@@ -65,9 +68,8 @@ class MainActivity : AppCompatActivity() {
         val DiscoverDeviceBtn: Button = findViewById(R.id.discoverbtn)
         val ScanDevices: Button = findViewById(R.id.scanDevice)
         val showPairedDevices: Button = findViewById(R.id.showpaireddevicesbtn)
-
-
         val pgsBar: ProgressBar  = findViewById(R.id.pBar);
+
 pgsBar.setVisibility(GONE)
         DevicesTv = findViewById(R.id.DevicesTv)
         bltImage = findViewById(R.id.bltImg)
@@ -143,9 +145,9 @@ pgsBar.setVisibility(GONE)
         ScanDevices.setOnClickListener()
         {
 
-           scanBLEdevices()
-
-
+         //  scanBLEdevices()
+           val intent = Intent(this, ScanActivity::class.java)
+            startActivity(intent)
         //Second way to discover bluetooth devices
 
 
@@ -170,7 +172,7 @@ pgsBar.setVisibility(GONE)
 
     }
 
-    private fun scanBLEdevices() {
+            private fun scanBLEdevices() {
         if (!scanning) { // Stops scanning after a pre-defined scan period.
             handler.postDelayed({
                 scanning = false
@@ -198,10 +200,6 @@ pgsBar.setVisibility(GONE)
      {
          super.onScanResult(callbackType, result)
          newScannedDeviceList = arrayListOf<AvailableDevices>()
-
-         // leDeviceListAdapter.addDevice(result.device)
-         //  leDeviceListAdapter.notifyDataSetChanged()
-
          DevicesTv.setText("Scanned Devices")
          val indexQuery = scanResults.indexOfFirst { it.device.address == result.device.address }
          if (indexQuery != -1)
@@ -222,12 +220,13 @@ pgsBar.setVisibility(GONE)
                  var devicename1=result.device.name
                  var address=result.device.address
                  var rssii=result.rssi
-                 if (result.device.name==null)
+
+           /*      if (result.device.name==null)
                  {
-                     devicename1="Unnamed"
+                     devicename1="UnNamed"
                  }
 
-          /*      for(i in scanResults)
+                for(i in scanResults)
                  {
                     val Device = AvailableDevices(address,devicename1,rssii)
                      newScannedDeviceList.add(Device)
@@ -235,13 +234,14 @@ pgsBar.setVisibility(GONE)
                }
 */
                //  println(newScannedDeviceList)
-               val Device = AvailableDevices(address,devicename1,rssii)
-                    newScannedDeviceList.add(Device)
+            //   val Device = AvailableDevices(address,devicename1,rssii)
+                    //newScannedDeviceList.add(Device)
 
-             newRecyclerView.adapter = ScannedDeviceAdapter(scanResults)
-
-                // newRecyclerView.adapter = RecyclerAdapter(newScannedDeviceList)
+                 newRecyclerView.adapter = ScannedDeviceAdapter(scanResults)
                  newRecyclerView.adapter?.notifyDataSetChanged()
+
+                 // newRecyclerView.adapter = RecyclerAdapter(newScannedDeviceList)
+                // newRecyclerView.adapter?.notifyDataSetChanged()
 
              }
          }
