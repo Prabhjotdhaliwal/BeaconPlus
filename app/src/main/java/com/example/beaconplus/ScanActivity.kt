@@ -9,7 +9,7 @@ import com.example.beaconplus.databinding.ActivityMainBinding
 
 
 
-class ScanActivity : AppCompatActivity()
+class ScanActivity : AppCompatActivity(),Communicator
 {
 
 
@@ -50,6 +50,19 @@ stopScan.setOnClickListener()
         tr.attach(fragment)
         tr.commit()
 
+
+    }
+
+    override fun transferData(DeviceName: String, DeviceAddress: String, DeviceRssi: Int) {
+        val bundle=Bundle()
+        bundle.putString("devicename",DeviceName)
+        bundle.putString("deviceaddress",DeviceAddress)
+        bundle.putInt("deviceRssi",DeviceRssi)
+        val transaction=this.supportFragmentManager.beginTransaction()
+        val ConnectionFragment=DeviceConnection()
+        ConnectionFragment.arguments=bundle
+        transaction.replace(R.id.fragment_container,ConnectionFragment)
+        transaction.commit()
 
     }
 }

@@ -15,11 +15,15 @@ interface onItemClickListener{
     fun onItemClick(position: Int)
 }
 
+    fun setOnItemClickListener(listener: onItemClickListener)
+    {
+        mListener=listener
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder
     {
         val itemView=LayoutInflater.from(parent.context).inflate(R.layout.row_items,parent,false)
-        return ViewHolder(itemView)
+        return ViewHolder(itemView,mListener)
     }
 
     override fun getItemCount() = items.size
@@ -33,7 +37,7 @@ interface onItemClickListener{
        holder.bind(item)
     }
 
-   inner class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view),View.OnClickListener {
+    class ViewHolder(  view: View,listener: onItemClickListener) : RecyclerView.ViewHolder(view) {
         val DeviceName: TextView =itemView.findViewById(R.id.deviceName11)
         val DeviceAddress: TextView =itemView.findViewById(R.id.deviceAddress11)
         val DeviceRssi: TextView =itemView.findViewById(R.id.deviceAddress11)
@@ -52,18 +56,16 @@ interface onItemClickListener{
             }
 //set an onClicklistener
         init {
-            view.setOnClickListener(this)
-        }
-       override fun onClick(v: View) {
-           val position = adapterPosition
-           onItemClick(position)
-       }
-       }
-
-    fun onItemClick(position: Int)
-    {
+            view.setOnClickListener{
+                listener.onItemClick(adapterPosition)
+            }
 }
-    }
+
+
+
+
+
+    }}
 
 
 

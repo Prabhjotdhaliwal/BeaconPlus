@@ -22,6 +22,9 @@ val frg_TAG=1
     private var scanning = false
     private val handler = Handler()
     private val SCAN_PERIOD: Long = 10000
+
+    private lateinit var communicator: Communicator
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
@@ -31,7 +34,6 @@ val frg_TAG=1
         // Set Recyclerview
         newRecyclerView.layoutManager = LinearLayoutManager(view.context)
         newRecyclerView.setHasFixedSize(true)
-
         scanBLEdevices()
 
     }
@@ -67,11 +69,6 @@ val frg_TAG=1
         {
             super.onScanResult(callbackType, result)
             newScannedDeviceList = arrayListOf<AvailableDevices>()
-            Toast.makeText(getActivity(),"Text!",Toast.LENGTH_SHORT).show();
-
-            // leDeviceListAdapter.addDevice(result.device)
-            //  leDeviceListAdapter.notifyDataSetChanged()
-
             DevicesTv.setText("Scanned Devices")
             val indexQuery = scanResults.indexOfFirst { it.device.address == result.device.address }
             if (indexQuery != -1)
@@ -86,8 +83,30 @@ val frg_TAG=1
                 {
                     println("Found BLE device! Name: ${name ?: "Unnamed"},address: $address")
                     scanResults.add(result)
-                    newRecyclerView.adapter = ScannedDeviceAdapter(scanResults)
-                    newRecyclerView.adapter?.notifyDataSetChanged()
+                    val adapter=ScannedDeviceAdapter(scanResults)
+                    newRecyclerView.adapter=adapter
+                    adapter.notifyDataSetChanged()
+                    adapter.setOnItemClickListener(object :ScannedDeviceAdapter.onItemClickListener
+                    {
+                        override fun onItemClick(position: Int) {
+Toast.makeText(activity,"You have clicked $position",Toast.LENGTH_SHORT).show()
+
+                            communicator=activity as Communicator
+if (result.device.name==null)
+
+{
+    communicator.transferData("Unnamed",result.device.address,result.rssi)
+
+}
+else
+{
+    communicator.transferData(result.device.name,result.device.address,result.rssi)
+
+}
+
+                        }
+                    })
+                  //  newRecyclerView.adapter = ScannedDeviceAdapter(scanResults)
 
                 }
             }
